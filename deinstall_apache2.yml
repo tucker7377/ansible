@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Remove apache2 package
+    yum:
+      name: httpd.x86_64
+      state: absent
