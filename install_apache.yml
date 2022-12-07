@@ -4,6 +4,16 @@
   become: true
   tasks:
 
+
+
   - name: Install apache2 package
-    yum:
+    dnf:
       name: httpd.x86_64
+    when: ansible_distribution_version == "9.1" and ansible_distribution in ["Unbuntu", "RedHat"]
+#    when: ansible_distributio_version == "9.1" and ansible_distribution == "RedHat"
+#    when: ansible_distributio_version == "9.1"
+
+  - name: Install php support
+    dnf:
+      name: php
+      state: latest
