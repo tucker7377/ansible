@@ -4,16 +4,19 @@
   become: true
   tasks:
 
+  - name: Install apache2 and php packages for RedHat
+    package:
+      name: 
+        - httpd.x86_64
+        - php
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
 
-
-  - name: Install apache2 package
-    dnf:
-      name: httpd.x86_64
-    when: ansible_distribution_version == "9.1" and ansible_distribution in ["Unbuntu", "RedHat"]
-#    when: ansible_distributio_version == "9.1" and ansible_distribution == "RedHat"
-#    when: ansible_distributio_version == "9.1"
-
-  - name: Install php support
-    dnf:
-      name: php
+  - name: Install apache2 and php packages for Ubuntu
+    package:
+      name: 
+        - apache2
+        - libapache2-mod-php
       state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
