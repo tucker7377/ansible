@@ -16,11 +16,21 @@
   tasks: 
 
   - name: Install apache2 and php packages for RedHat
+    tags: apache,apache2,httpd,RedHat
     package:
       name:
         - httpd.x86_64
         - php
     when: ansible_distribution == "RedHat"
+
+  - name: Copy default html for site
+    tags: apache,apache2,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      owner: root
+      mode: 0644
 
   - name: Start httpd (RedHat)
     tags: apache,RedHat,httpd
