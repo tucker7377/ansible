@@ -11,6 +11,25 @@
       update_cache: yes
     when: ansible_distribution == "RedHat"
 
+- hosts: web_servers
+  become: true
+  tasks: 
+
+  - name: Install apache2 and php packages for RedHat
+    package:
+      name:
+        - httpd.x86_64
+        - php
+    when: ansible_distribution == "RedHat"
+
+  - name: Start httpd (RedHat)
+    tags: apache,RedHat,httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution == "RedHat"
+
   - name: Change email address for admin
     tags: apache,RedHat,httpd
     lineinfile:
@@ -27,17 +46,27 @@
       state: restarted
     when: httpd.changed
 
-  - name: Install apache2 and php packages for RedHat
-    package:
-      name:
-        - httpd.x86_64
-        - php
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: Install Mariadb package (RedHat)
+    dnf:
+      name: mariadb
+      state: latest
     when: ansible_distribution == "RedHat"
 
-  - name: Start httpd (RedHat)
-    tags: apache,RedHat,httpd
-    service:
-      name: httpd
-      state: started
-      enabled: yes
-    when: ansible_distribution == "RedHat"
+  - name: Install Mariadb package (Ubuntu)
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+  - name: Install samba package
+    package:
+      name: samba
+      state: latest
