@@ -1,0 +1,43 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Install Updates (RedHat)
+    tags:  always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "RedHat"
+
+  - name: Change email address for admin
+    tags: apache,RedHat,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin somebody@somewhere.com
+    when: ansible_distribution == "RedHat"
+    register: httpd
+
+  - name: Restart httpd (RedHat)
+    tags: apache,RedHat,httpd
+    service: 
+      name: httpd
+      state: restarted
+    when: httpd.changed
+
+  - name: Install apache2 and php packages for RedHat
+    package:
+      name:
+        - httpd.x86_64
+        - php
+    when: ansible_distribution == "RedHat"
+
+  - name: Start httpd (RedHat)
+    tags: apache,RedHat,httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution == "RedHat"
