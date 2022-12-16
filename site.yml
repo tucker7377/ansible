@@ -11,6 +11,30 @@
       update_cache: yes
     when: ansible_distribution == "RedHat"
 
+- hosts: all
+  become: true
+  tasks:
+
+  - name: Create User 
+    tags: always
+    user:
+      name: simone
+      groups: root
+
+  - name: Add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF/kM7sd2mk3w+ajA0qKIJ6Le6FHswVsMu2EL5r9fsts ansilbe"
+
+  - name: Add sudoers file for simone
+    tags: always
+    copy:
+      src: sudoers_simone
+      dest: /etc/sudoers.d/simone
+      owner: root
+      group: root
+
 - hosts: workstations
   become: true
   tasks:
